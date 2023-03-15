@@ -19,7 +19,7 @@ class WebUI(object):
         self.flask_thread.daemon = True
         self.debug = debug
 
-        self.url = "http://{}:{}".format(url, port)
+        self.url = f"http://{url}:{port}"
         self.app = core_widgets.QApplication([])
         self.app.setWindowIcon(gui.QIcon(icon_path))
         self.app.setApplicationName(app_name)
