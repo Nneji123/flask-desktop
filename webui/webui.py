@@ -1,10 +1,6 @@
 from threading import Thread
 
-import PySide2.QtCore as core
-import PySide2.QtWidgets as core_widgets
-import PySide2.QtWebEngine as web_engine
-import PySide2.QtWebEngineWidgets as web_widgets
-import PySide2.QtGui as gui
+from PyQt5 import QtCore, QtGui, QtWidgets, QtWebEngineWidgets, QtWebEngineCore
 
 
 default_url = "127.0.0.1"
@@ -20,10 +16,10 @@ class WebUI(object):
         self.debug = debug
 
         self.url = "http://{}:{}".format(url, port)
-        self.app = core_widgets.QApplication([])
-        self.app.setWindowIcon(gui.QIcon(icon_path))
+        self.app = QtWidgets.QApplication([])
+        self.app.setWindowIcon(QtGui.QIcon(icon_path))
         self.app.setApplicationName(app_name)
-        self.view = web_widgets.QWebEngineView(self.app.activeModalWidget())
+        self.view = QtWebEngineWidgets.QWebEngineView(self.app.activeModalWidget())
         self.page = CustomWebEnginePage(self.view)
         self.view.setPage(self.page)
 
@@ -35,10 +31,10 @@ class WebUI(object):
         self.flask_thread.start()
 
     def run_gui(self):
-        self.view.load(core.QUrl(self.url))
+        self.view.load(QtCore.QUrl(self.url))
 
         change_setting = self.view.page().settings().setAttribute
-        settings = web_widgets.QWebEngineSettings
+        settings = QtWebEngineWidgets.QWebEngineSettings
         change_setting(settings.LocalStorageEnabled, True)
         change_setting(settings.PluginsEnabled, True)
 
@@ -58,7 +54,8 @@ class WebUI(object):
             pythoncom.CoInitialize()
         self.flask_app.run(debug=debug, host=host, port=port, use_reloader=False)
 
-class CustomWebEnginePage(web_widgets.QWebEnginePage):
+
+class CustomWebEnginePage(QtWebEngineWidgets.QWebEnginePage):
     def createWindow(self, _type):
         page = CustomWebEnginePage(self)
         page.urlChanged.connect(self.open_browser)
@@ -66,5 +63,5 @@ class CustomWebEnginePage(web_widgets.QWebEnginePage):
 
     def open_browser(self, url):
         page = self.sender()
-        gui.QDesktopServices.openUrl(url)
+        QtGui.QDesktopServices.openUrl(url)
         page.deleteLater()
